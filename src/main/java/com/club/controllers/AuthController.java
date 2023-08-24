@@ -1,14 +1,10 @@
 package com.club.controllers;
 
-import com.club.entities.Customer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,10 +13,6 @@ public class AuthController {
 
     @GetMapping("/auth/status")
     public ResponseEntity<Object> getAuthStatus(Authentication authentication) {
-        /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();*/
-
-        System.out.println(authentication);
-
         if (authentication != null && authentication.isAuthenticated()) {
             Map<String, Object> response = new HashMap<>();
             response.put("authenticated", true);

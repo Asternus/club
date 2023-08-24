@@ -56,7 +56,7 @@ public class SecurityConfig {
                     cors.configurationSource(request -> corsConfiguration);
                 })
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/", "/auth/status").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()

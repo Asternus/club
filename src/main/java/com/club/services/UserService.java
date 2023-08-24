@@ -34,6 +34,12 @@ public class UserService implements UserDetailsService {
     }
 
     public void saveUser(final Customer customer) {
+        final Customer username = userRepository.findByUsername(customer.getUsername());
+
+        if (username != null && username.getUsername().equals(customer.getUsername())) {
+            throw new IllegalArgumentException("This user is present");
+        }
+
         final String encode = passwordEncoder.encode(customer.getPassword());
         customer.setPassword(encode);
         userRepository.save(customer);
