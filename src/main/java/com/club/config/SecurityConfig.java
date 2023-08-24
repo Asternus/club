@@ -9,18 +9,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -35,7 +29,17 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web
                 .ignoring()
-                .requestMatchers("/auth/status", "/add-user");
+                .requestMatchers("/add-user");
+    }
+
+    @Bean
+    public CookieSerializer cookieSerializer() {
+        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        serializer.setSameSite("None");
+        serializer.setUseSecureCookie(true);
+        serializer.setCookieName("SESSION");
+        serializer.setCookiePath("/");
+        return serializer;
     }
 
     @Bean
@@ -43,11 +47,12 @@ public class SecurityConfig {
         http
                 .cors(cors -> {
                     CorsConfiguration corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.addAllowedOrigin("http://localhost:8080");
+                    corsConfiguration.addAllowedOrigin("http://localhost:8080/");
                     corsConfiguration.addAllowedMethod("*");
                     corsConfiguration.addAllowedHeader("*");
                     corsConfiguration.setAllowCredentials(true);
                     corsConfiguration.setMaxAge(3600L);
+                    corsConfiguration.addExposedHeader("*");
                     cors.configurationSource(request -> corsConfiguration);
                 })
                 .authorizeHttpRequests((requests) -> requests
@@ -55,7 +60,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()
-                .formLogin(Customizer.withDefaults())
+                .formLogin(login ->
+                        login
+                                .permitAll()
+                                .defaultSuccessUrl("/messages", true))
                 .rememberMe(Customizer.withDefaults())
                 .logout(LogoutConfigurer::permitAll);
 
