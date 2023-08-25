@@ -1,10 +1,8 @@
 package com.club.controllers;
 
 import com.club.entities.Message;
-import com.club.entities.User;
 import com.club.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,9 +19,7 @@ public class MessageController {
     }
 
     @GetMapping("/messages")
-    public List<Message> getAllMessages(@AuthenticationPrincipal User user) {
-        System.out.println(user);
-
+    public List<Message> getAllMessages() {
         return messageService.getAllMessages();
     }
 
