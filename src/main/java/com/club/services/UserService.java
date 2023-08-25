@@ -1,13 +1,17 @@
 package com.club.services;
 
-import com.club.entities.Customer;
+import com.club.entities.Role;
+import com.club.entities.User;
 import com.club.repositories.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -23,8 +27,8 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Customer user = userRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
 
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
@@ -33,15 +37,14 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public void saveUser(final Customer customer) {
-        final Customer username = userRepository.findByUsername(customer.getUsername());
+    public User getUserByEmail(final String email) {
+        return userRepository.findByEmail(email);
+    }
 
-        if (username != null && username.getUsername().equals(customer.getUsername())) {
-            throw new IllegalArgumentException("This user is present");
-        }
-
-        final String encode = passwordEncoder.encode(customer.getPassword());
-        customer.setPassword(encode);
-        userRepository.save(customer);
+    public void saveUser(@Valid final User user) {
+        user.setRoles(Set.of(Role.USER));
+        final String encode = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encode);
+        userRepository.save(user);
     }
 }

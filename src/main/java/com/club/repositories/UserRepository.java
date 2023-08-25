@@ -1,12 +1,14 @@
 package com.club.repositories;
 
-import com.club.entities.Customer;
+import com.club.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<Customer, String> {
+public interface UserRepository extends JpaRepository<User, String> {
 
-    Customer findByUsername(String nickname);
+    User findByUsername(String nickname);
+
+    User findByEmail(String email);
 
 }

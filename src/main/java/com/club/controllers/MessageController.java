@@ -1,6 +1,6 @@
 package com.club.controllers;
 
-import com.club.entities.Customer;
+import com.club.entities.User;
 import com.club.entities.Message;
 import com.club.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,8 @@ public class MessageController {
     }
 
     @GetMapping("/messages")
-    public List<Message> getAllMessages(@AuthenticationPrincipal Customer customer) {
-        System.out.println(customer);
+    public List<Message> getAllMessages(@AuthenticationPrincipal User user) {
+        System.out.println(user);
 
     return messageService.getAllMessages();
     }

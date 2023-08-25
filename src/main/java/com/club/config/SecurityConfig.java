@@ -1,5 +1,7 @@
 package com.club.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -15,6 +17,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.web.cors.CorsConfiguration;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -63,8 +71,37 @@ public class SecurityConfig {
                 .formLogin(login ->
                         login
                                 .permitAll()
-                                .defaultSuccessUrl("/messages", true))
+                                .defaultSuccessUrl("/", false))
                 .rememberMe(Customizer.withDefaults())
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .authenticationEntryPoint((request, response, authException) -> {
+                                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                    response.setContentType("application/json");
+
+                                    Map<String, String> map = new HashMap<>();
+
+                                    final String message = authException.getLocalizedMessage();
+
+                                    if (authException != null) {
+                                        map.put("exception", authException.getClass().getSimpleName());
+                                        map.put("stackTrace", Arrays.toString(authException.getStackTrace()));
+                                        map.put("message", message);
+                                    }
+
+                                    try {
+                                        PrintWriter writer = response.getWriter();
+                                        writer.write(map.toString());
+                                        writer.flush();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                })
+                                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                                    // Здесь можно вернуть JSON-ответ с информацией об ошибке
+                                })
+                )
                 .logout(LogoutConfigurer::permitAll);
 
         return http.build();
