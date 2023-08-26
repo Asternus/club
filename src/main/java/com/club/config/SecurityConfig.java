@@ -71,7 +71,7 @@ public class SecurityConfig {
                 .formLogin(login ->
                         login
                                 .permitAll()
-                                .defaultSuccessUrl("/", false))
+                                .defaultSuccessUrl("/auth/status", true))
                 .rememberMe(Customizer.withDefaults())
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
@@ -102,7 +102,7 @@ public class SecurityConfig {
                                     // Здесь можно вернуть JSON-ответ с информацией об ошибке
                                 })
                 )
-                .logout(LogoutConfigurer::permitAll);
+                .logout(logout -> logout.permitAll().logoutSuccessUrl("/auth/status"));
 
         return http.build();
     }
