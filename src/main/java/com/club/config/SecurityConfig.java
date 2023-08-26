@@ -1,6 +1,5 @@
 package com.club.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -85,11 +83,9 @@ public class SecurityConfig {
 
                                     final String message = authException.getLocalizedMessage();
 
-                                    if (authException != null) {
-                                        map.put("exception", authException.getClass().getSimpleName());
-                                        map.put("stackTrace", Arrays.toString(authException.getStackTrace()));
-                                        map.put("message", message);
-                                    }
+                                    map.put("exception", authException.getClass().getSimpleName());
+                                    map.put("stackTrace", Arrays.toString(authException.getStackTrace()));
+                                    map.put("message", message);
 
                                     try {
                                         PrintWriter writer = response.getWriter();

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -43,6 +44,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> getById(final String guid) {
+        return userRepository.findById(guid);
+    }
+
     public void saveUser(final User user) {
         final User userByEmail = userRepository.findByEmail(user.getEmail());
 
@@ -53,6 +58,7 @@ public class UserService implements UserDetailsService {
         user.setRoles(Set.of(Role.USER));
         final String encode = passwordEncoder.encode(user.getPassword());
         user.setPassword(encode);
+        user.setNonLocked(true);
         userRepository.save(user);
     }
 
@@ -63,6 +69,7 @@ public class UserService implements UserDetailsService {
             throw new ValidationException();
         }
 
+        user.setNonLocked(true);
         userRepository.save(user);
     }
 
