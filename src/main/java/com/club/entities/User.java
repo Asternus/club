@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -50,6 +51,12 @@ public class User implements UserDetails {
     private Set<Role> roles;
 
     private boolean nonLocked;
+
+    private boolean isAvailable;
+
+    @OneToOne
+    @JoinColumn(name = "account_id")
+    private Wallet wallet;
 
     public User() {
     }

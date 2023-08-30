@@ -62,6 +62,10 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    public void editUser(final User user) {
+        userRepository.save(user);
+    }
+
     public void saveUserByAdmin(final User user) {
         final User userByEmail = userRepository.findByEmail(user.getEmail());
 
