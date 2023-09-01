@@ -32,7 +32,8 @@ public class WorkService {
 
         final Runnable task = () -> {
             final Wallet wallet = user.getWallet();
-            wallet.setAster(new BigDecimal(time * 100));
+            final BigDecimal bigDecimal = wallet.addAsters(new BigDecimal(time * 100));
+            wallet.setAster(bigDecimal);
             user.setAvailable(true);
             accountService.saveAccount(wallet);
             userService.editUser(user);

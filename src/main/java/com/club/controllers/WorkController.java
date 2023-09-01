@@ -9,7 +9,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -48,9 +47,7 @@ public class WorkController {
     public ResponseEntity<Map<String, Long>> doWork(@AuthenticationPrincipal User user, @RequestBody Map<String, Long> requestData) {
         final Long time = requestData.get("time");
         workService.updateWork(user, time);
-        final HashMap<String, Long> stringLongHashMap = new HashMap<>();
-        stringLongHashMap.put("myTime", time);
-        return ResponseEntity.ok(stringLongHashMap);
+        return ResponseEntity.ok(new HashMap<>());
     }
 
 }

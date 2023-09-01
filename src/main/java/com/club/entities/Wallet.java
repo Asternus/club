@@ -24,6 +24,10 @@ public class Wallet implements Serializable {
 
     private BigDecimal aster;
 
+    public BigDecimal addAsters(final BigDecimal bigDecimal) {
+        return this.aster.add(bigDecimal);
+    }
+
     public Wallet() {
     }
 }
