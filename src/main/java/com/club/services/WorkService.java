@@ -16,15 +16,15 @@ public class WorkService {
 
     private final UserService userService;
 
-    private final AccountService accountService;
+    private final WalletService walletService;
 
     @Autowired
-    public WorkService(UserService userService, AccountService accountService) {
+    public WorkService(UserService userService, WalletService walletService) {
         this.userService = userService;
-        this.accountService = accountService;
+        this.walletService = walletService;
     }
 
-    public void updateWork(final User user, final Long time) {
+    public void updateWork(final User user, final Long time, final Long salary) {
         final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
         user.setAvailable(false);
@@ -32,10 +32,10 @@ public class WorkService {
 
         final Runnable task = () -> {
             final Wallet wallet = user.getWallet();
-            final BigDecimal bigDecimal = wallet.addAsters(new BigDecimal(time * 100));
+            final BigDecimal bigDecimal = wallet.addAsters(BigDecimal.valueOf(time * salary));
             wallet.setAster(bigDecimal);
             user.setAvailable(true);
-            accountService.saveAccount(wallet);
+            walletService.saveWallet(wallet);
             userService.editUser(user);
         };
 

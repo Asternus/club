@@ -1,6 +1,7 @@
 package com.club.controllers;
 
 import com.club.entities.User;
+import com.club.entities.WorkProfile;
 import com.club.services.UserService;
 import com.club.services.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class WorkController {
@@ -29,16 +30,15 @@ public class WorkController {
     }
 
     @GetMapping("/get-work")
-    public ResponseEntity<Map<String, Boolean>> getWork(@AuthenticationPrincipal User user) {
-        final Optional<User> byId = userService.getById(user.getId());
+    public ResponseEntity<Map<String, Object>> getWork(@AuthenticationPrincipal User user) {
+        final User myUser = userService.getById(user.getId()).orElseThrow();
 
-        final Map<String, Boolean> result = new HashMap<>();
+        final Map<String, Object> result = new HashMap<>();
 
-        final boolean isAvailable = byId
-                .map(User::isAvailable)
-                .orElse(false);
+        final List<WorkProfile> workProfiles = myUser.getWorkProfiles();
 
-        result.put("isAvailable", isAvailable);
+        result.put("isAvailable", myUser.isAvailable());
+        result.put("workProfiles", workProfiles);
 
         return ResponseEntity.ok(result);
     }
@@ -46,7 +46,9 @@ public class WorkController {
     @PostMapping("/do-work")
     public ResponseEntity<Map<String, Long>> doWork(@AuthenticationPrincipal User user, @RequestBody Map<String, Long> requestData) {
         final Long time = requestData.get("time");
-        workService.updateWork(user, time);
+        final Long salary = requestData.get("salary");
+        final User myUser = userService.getById(user.getId()).orElseThrow();
+        workService.updateWork(myUser, time, salary);
         return ResponseEntity.ok(new HashMap<>());
     }
 
