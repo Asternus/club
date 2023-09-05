@@ -1,45 +1,40 @@
 package com.club.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @ToString
-public class WorkProfile implements Serializable {
+public class CompanyProfile {
 
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
-    private String position;
+    private String companyName;
 
-    private String jobName;
+    private String description;
 
-    private BigDecimal salary;
+    private Long employees;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "companyProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private User user;
+    private List<WorkProfile> workProfiles;
 
-    @ManyToOne
-    @JoinColumn(name = "company_profile_id")
-    private CompanyProfile companyProfile;
-
-    public WorkProfile() {
+    public CompanyProfile() {
     }
 }
