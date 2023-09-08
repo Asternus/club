@@ -27,11 +27,20 @@ public class WorkProfileService {
         return myUser.getWorkProfiles();
     }
 
+    public WorkProfile getWorksProfileById(final String id) {
+        final WorkProfile workProfile = workProfileRepository.findById(id).orElseThrow();
+        return workProfile;
+    }
+
     public void saveWorkProfile(final WorkProfile workProfile) {
         workProfileRepository.save(workProfile);
     }
 
     public void saveAllWorkProfiles(final List<WorkProfile> workProfiles) {
         workProfileRepository.saveAll(workProfiles);
+    }
+
+    public List<WorkProfile> getAllFreeWorkProfiles() {
+        return workProfileRepository.getAllFreeWorkProfile();
     }
 }

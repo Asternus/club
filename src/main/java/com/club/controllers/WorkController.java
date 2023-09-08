@@ -3,6 +3,7 @@ package com.club.controllers;
 import com.club.entities.User;
 import com.club.entities.WorkProfile;
 import com.club.services.UserService;
+import com.club.services.WorkProfileService;
 import com.club.services.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,13 @@ public class WorkController {
 
     private final UserService userService;
 
+    private final WorkProfileService workProfileService;
+
     @Autowired
-    public WorkController(WorkService workService, UserService userService) {
+    public WorkController(WorkService workService, UserService userService, WorkProfileService workProfileService) {
         this.workService = workService;
         this.userService = userService;
+        this.workProfileService = workProfileService;
     }
 
     @GetMapping("/get-work")
@@ -50,6 +54,22 @@ public class WorkController {
         final User myUser = userService.getById(user.getId()).orElseThrow();
         workService.updateWork(myUser, time, salary);
         return ResponseEntity.ok(new HashMap<>());
+    }
+
+    @GetMapping("/get-vacancy")
+    public List<WorkProfile> getVacancy() {
+        return workProfileService.getAllFreeWorkProfiles();
+    }
+
+    @PostMapping("/take-vacancy")
+    public ResponseEntity<Boolean> takeVacancy(@AuthenticationPrincipal User user, @RequestBody Map<String, String> requestBody) {
+        final User myUser = userService.getById(user.getId()).orElseThrow();
+        String vacancyId = requestBody.get("vacancyId");
+        final WorkProfile worksProfileById = workProfileService.getWorksProfileById(vacancyId);
+        worksProfileById.setUser(myUser);
+        workProfileService.saveWorkProfile(worksProfileById);
+
+        return ResponseEntity.ok(true);
     }
 
 }

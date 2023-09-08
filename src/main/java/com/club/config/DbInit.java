@@ -75,7 +75,6 @@ public class DbInit {
 
         CompanyProfile companyProfile = new CompanyProfile();
         companyProfile.setCompanyName("Racoons");
-        companyProfile.setEmployees(1L);
         companyProfile.setDescription("We are raccoons");
 
         companyProfileService.save(companyProfile);
@@ -87,6 +86,13 @@ public class DbInit {
         workProfile.setUser(user);
         workProfile.setCompanyProfile(companyProfile);
 
+        final WorkProfile workProfile1 = new WorkProfile();
+        workProfile1.setPosition("Cat");
+        workProfile1.setSalary(new BigDecimal(1000));
+        workProfile1.setJobName("mew");
+        workProfile1.setCompanyProfile(companyProfile);
+
         workProfileService.saveWorkProfile(workProfile);
+        workProfileService.saveWorkProfile(workProfile1);
     }
 }
